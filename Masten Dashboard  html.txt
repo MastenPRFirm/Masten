@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Masten PR Firm Executive Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+    .login-container {
+      background-color: #fff;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 300px;
+      text-align: center;
+      margin: 50px auto;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      background-color: #003366;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #002244;
+    }
+    .message {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+    .dashboard {
+      display: none;
+      padding: 20px;
+    }
+    .visible { display: block; }
+    .role-indicator {
+      font-weight: bold;
+      color: #003366;
+      text-align: center;
+      margin-top: 20px;
+    }
+    .section {
+      padding: 15px;
+      background: #fff;
+      margin: 20px;
+      border-left: 5px solid #003366;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    footer {
+      text-align: center;
+      font-size: 12px;
+      color: #999;
+      margin-top: 40px;
+    }
+  </style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js">  // Chart.js - Readiness Heat Map
+  const ctx = document.getElementById('readinessChart');
+  if (ctx) {
+    new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Ready', 'Emerging', 'Needs Development'],
+        datasets: [{
+          label: 'Succession Readiness',
+          data: [4, 2, 2],
+          backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+        }]
+      },
+      options: {
+        plugins: {
+          legend: {
+            position: 'bottom',
+          }
+        }
+      }
+    });
+  }
+<style>
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    justify-content: center;
+    align-items: center;
+  }
+  .modal-content {
+    background: #fff;
+    padding: 20px;
+    width: 400px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  }
+  .close-btn {
+    float: right;
+    cursor: pointer;
+    color: #aaa;
+    font-size: 18px;
+  }
+  .close-btn:hover {
+    color: #000;
+  }
+</style>
+<style>
+  .search-bar {
+    margin: 10px auto;
+    text-align: center;
+  }
+  .search-bar input {
+    padding: 8px;
+    width: 250px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+</style>
+</head>
+<body>
+  <div class="login-container" id="loginBox">
+    <h2>Login to Masten Dashboard</h2>
+    <input type="text" id="username" placeholder="Username" />
+    <select id="role">
+      <option value="executive">Executive</option>
+      <option value="supervisor">Supervisor</option>
+      <option value="employee">Employee</option>
+    </select>
+    <button onclick="login()">Login</button>
+    <div class="message" id="message"></div>
+  </div>
+
+  <div class="search-bar">
+  <input type="text" id="searchInput" onkeyup="filterSections()" placeholder="Search employees or sections..." />
+</div>
+<div class="dashboard" id="dashboard">
+    <div class="section">
+      <h3>📊 Readiness Heat Map</h3>
+      <canvas id="readinessChart" width="300" height="200"></canvas>
+    </div>
+    <div class="role-indicator" id="roleIndicator"></div>
+    <div class="section">
+      <h3>👤 Welcome</h3>
+      <p>This is the live dashboard for Masten PR Firm. Visibility and functionality depend on your access level.</p>
+    </div>
+    <div class="section" data-access="executive supervisor">
+      <h3>📊 Financial Overview</h3>
+      <table style='width: 100%; border-collapse: collapse;'>
+        <thead>
+          <tr style='background: #003366; color: #fff;'>
+            <th style='padding: 8px; border: 1px solid #ccc;'>Division</th>
+            <th style='padding: 8px; border: 1px solid #ccc;'>Payroll</th>
+            <th style='padding: 8px; border: 1px solid #ccc;'>Revenue</th>
+            <th style='padding: 8px; border: 1px solid #ccc;'>ROI</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style='padding: 8px;'>Client Strategy</td><td>$1.5M</td><td>$4.1M</td><td>173%</td></tr>
+          <tr><td style='padding: 8px;'>Creative & Media</td><td>$890K</td><td>$1.4M</td><td>157%</td></tr>
+          <tr><td style='padding: 8px;'>Public Affairs</td><td>$1.2M</td><td>$3.9M</td><td>225%</td></tr>
+          <tr><td style='padding: 8px;'>Digital Solutions</td><td>$925K</td><td>$1.2M</td><td>130%</td></tr>
+          <tr><td style='padding: 8px;'>Events & Campaigns</td><td>$800K</td><td>$1.7M</td><td>212%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section" data-access="executive supervisor">
+      <h3>👥 Employee Performance & Succession</h3>
+      <table style='width: 100%; border-collapse: collapse;'>
+        <thead>
+          <tr style='background: #003366; color: #fff;'>
+            <th style='padding: 8px;'>Name</th>
+            <th style='padding: 8px;'>Role</th>
+            <th style='padding: 8px;'>Succession Timeline</th>
+            <th style='padding: 8px;'>Readiness</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><a href='#' onclick="showProfile('Wayne Norton')">Wayne Norton</a></td><td>Chief Strategy Officer</td><td>12–18 mo</td><td>🟡</td></tr>
+          <tr><td><a href='#' onclick="showProfile('Erica Vaughn')">Erica Vaughn</a></td><td>VP of Strategic Accounts</td><td>6–12 mo</td><td>🟢</td></tr>
+          <tr><td><a href='#' onclick="showProfile('Valene Parks')">Valene Parks</a></td><td>Public Affairs Officer</td><td>18–24 mo</td><td>🔴</td></tr>
+          <tr><td><a href='#' onclick="showProfile('Travia Clarke')">Travia Clarke</a></td><td>COO of Events</td><td>6 mo</td><td>🟢</td></tr>
+        </tbody>
+      </table>
+    </div>
+<div class="section">
+  <h3>📚 Learning & Certifications</h3>
+  <table style='width: 100%; border-collapse: collapse;'>
+    <thead>
+      <tr style='background: #003366; color: #fff;'>
+        <th style='padding: 8px;'>Employee</th>
+        <th style='padding: 8px;'>Certification</th>
+        <th style='padding: 8px;'>Completed</th>
+        <th style='padding: 8px;'>Hours</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Wayne Norton</td><td>Strategic Leadership</td><td>✅</td><td>16</td></tr>
+      <tr><td>Erica Vaughn</td><td>Public Speaking</td><td>✅</td><td>8</td></tr>
+      <tr><td>Valene Parks</td><td>Policy Analysis</td><td>In Progress</td><td>4</td></tr>
+      <tr><td>Jack Made</td><td>Advanced Analytics</td><td>✅</td><td>12</td></tr>
+    </tbody>
+  </table>
+    </div>
+<div class="section">
+  <h3>⚖️ Discipline & Recognition</h3>
+  <table style='width: 100%; border-collapse: collapse;'>
+    <thead>
+      <tr style='background: #003366; color: #fff;'>
+        <th style='padding: 8px;'>Employee</th>
+        <th style='padding: 8px;'>Type</th>
+        <th style='padding: 8px;'>Detail</th>
+        <th style='padding: 8px;'>Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Wayne Norton</td><td>Recognition</td><td>Top 5% Performance</td><td>Jan 2025</td></tr>
+      <tr><td>Valene Parks</td><td>Disciplinary</td><td>Verbal Warning – Attendance</td><td>Feb 2025</td></tr>
+      <tr><td>Travia Clarke</td><td>Recognition</td><td>Campaign Excellence Award</td><td>Mar 2025</td></tr>
+      <tr><td>Jack Made</td><td>Recognition</td><td>Innovation in Research</td><td>Dec 2024</td></tr>
+    </tbody>
+  </table>
+    </div>
+    <div style='text-align: center; margin: 20px;'>
+  <button onclick="window.print()" style="margin: 10px; padding: 10px 20px; background-color: #003366; color: #fff; border: none; border-radius: 5px; cursor: pointer;">🖨️ Print Dashboard</button>
+  <button onclick="exportToExcel()" style="margin: 10px; padding: 10px 20px; background-color: #004080; color: #fff; border: none; border-radius: 5px; cursor: pointer;">📥 Export to Excel</button>
+</div>
+<footer>Powered by Masten PR Firm – Confidential</footer>
+  </div>
+
+  <script>
+    function login() {
+      const user = document.getElementById('username').value.trim();
+      const role = document.getElementById('role').value;
+      const message = document.getElementById('message');
+
+      if (user) {
+        document.getElementById('loginBox').style.display = 'none';
+        document.getElementById('dashboard').classList.add('visible');
+        document.getElementById('roleIndicator').textContent = `Logged in as: ${user} (${role.toUpperCase()})`;
+      } else {
+        message.style.color = 'red';
+        message.textContent = 'Please enter a valid username.';
+      }
+    }
+    function exportToExcel() {
+    const table = document.querySelector('.dashboard');
+    const blob = new Blob([table.innerText], { type: 'text/plain' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'Masten_Dashboard_Summary.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+<div class="modal" id="profileModal">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeModal()">&times;</span>
+    <h3 id="modalName"></h3>
+    <p><strong>Role:</strong> <span id="modalRole"></span></p>
+    <p><strong>Degree:</strong> <span id="modalDegree"></span></p>
+    <p><strong>Certification:</strong> <span id="modalCert"></span></p>
+    <p><strong>Recognition:</strong> <span id="modalAward"></span></p>
+    <p><strong>Succession Target:</strong> <span id="modalSuccessor"></span></p>
+  </div>
+</div>
+<script>
+  const profiles = {
+    'Wayne Norton': { role: 'Chief Strategy Officer', degree: 'MBA, NYU', cert: 'Leadership', award: 'Top 5% Performer', successor: 'CEO' },
+    'Erica Vaughn': { role: 'VP, Strategic Accounts', degree: 'BA, Communications', cert: 'Public Speaking', award: 'N/A', successor: 'SVP' },
+    'Valene Parks': { role: 'Public Affairs Officer', degree: 'JD, Howard', cert: 'Policy Analysis', award: 'Verbal Warning', successor: 'COO' },
+    'Travia Clarke': { role: 'COO of Events', degree: 'MS, Events Mgmt', cert: 'Excellence Award', award: 'Campaign Honors', successor: 'President' }
+  };
+  function showProfile(name) {
+    const p = profiles[name];
+    document.getElementById('modalName').textContent = name;
+    document.getElementById('modalRole').textContent = p.role;
+    document.getElementById('modalDegree').textContent = p.degree;
+    document.getElementById('modalCert').textContent = p.cert;
+    document.getElementById('modalAward').textContent = p.award;
+    document.getElementById('modalSuccessor').textContent = p.successor;
+    document.getElementById('profileModal').style.display = 'flex';
+  }
+  function closeModal() {
+    document.getElementById('profileModal').style.display = 'none';
+  }
+  function filterSections() {
+    const input = document.getElementById('searchInput').value.toLowerCase();
+    const sections = document.querySelectorAll('.section');
+    sections.forEach(section => {
+      const text = section.textContent.toLowerCase();
+      section.style.display = text.includes(input) ? 'block' : 'none';
+    });
+  }
+</body>
+</html>
